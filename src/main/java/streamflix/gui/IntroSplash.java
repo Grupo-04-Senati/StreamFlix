@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
@@ -45,6 +46,9 @@ final class IntroSplash {
     private static final Color BORDE = new Color(0x3a3a3a);
     private static final Color BASE_PC = new Color(0x2b2b2b);
     private static final Color NEGRO_BOTON = new Color(0x111111);
+    /** Mismo fondo y mismo negro del bloque que la ventana principal, para que el cambio no se note. */
+    private static final Color FONDO_APP = new Color(0x1b1b1b);
+    private static final Color INTRO = Color.BLACK;
 
     private static final int ANCHO = 860;
     private static final int ALTO = 480;
@@ -63,6 +67,7 @@ final class IntroSplash {
     private static final double LOGO_INI = 4900;
     private static final double FLIX_INI = 5400;
     private static final double PALABRA_INI = 5800;
+    private static final double FONDO_INI = 4200, FONDO_FIN = 6700;
     private static final double SONIDO_FUNDIDO = 6200;
     private static final double FUNDIDO = 6850;
     private static final double DURACION = 7700;
@@ -85,6 +90,7 @@ final class IntroSplash {
     private Timer timer;
     private long inicio;
     private boolean cerrado;
+    private boolean principalVisible;
 
     IntroSplash(JFrame principal) {
         this.principal = principal;
@@ -96,8 +102,14 @@ final class IntroSplash {
         ventana = new JWindow();
         ventana.setContentPane(lienzo);
         ventana.setBackground(Color.BLACK);
-        ventana.setSize(ANCHO, ALTO);
-        ventana.setLocationRelativeTo(null);
+        // La intro ocupa la misma caja que la ventana principal: el relevo no cambia de tamaño.
+        Rectangle marco = principal != null ? principal.getBounds() : null;
+        if (marco != null && marco.width > 400 && marco.height > 400) {
+            ventana.setBounds(marco);
+        } else {
+            ventana.setSize(ANCHO, ALTO);
+            ventana.setLocationRelativeTo(null);
+        }
         ventana.setAlwaysOnTop(true);
         ventana.setVisible(true);
 
@@ -114,6 +126,10 @@ final class IntroSplash {
             aplicarVolumen(Math.max(0, v));
         }
         if (t >= FUNDIDO) {
+            if (!principalVisible && principal != null) {
+                principalVisible = true;
+                principal.setVisible(true); // ya detrás, con el mismo fondo: el fundido no salta
+            }
             opacidad((float) Math.max(0, 1 - (t - FUNDIDO) / (DURACION - FUNDIDO)));
         }
         if (t >= DURACION) {
@@ -198,15 +214,26 @@ final class IntroSplash {
                 g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                         RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
                 g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-                pintar(g, (System.nanoTime() - inicio) / 1_000_000.0);
+                double t = (System.nanoTime() - inicio) / 1_000_000.0;
+                int w = getWidth();
+                int h = getHeight();
+                // El fondo acaba exactamente en el tono de la ventana principal (sin salto al cerrar).
+                g.setColor(mezcla(INTRO, FONDO_APP, suave(t, FONDO_INI, FONDO_FIN)));
+                g.fillRect(0, 0, w, h);
+                // La animación está diseñada en 860x480 y se centra/adapta al tamaño de la ventana.
+                double k = Math.min(w / 860.0, h / 480.0);
+                g.translate(w / 2.0, h / 2.0);
+                g.scale(k, k);
+                g.translate(-430, -240);
+                pintar(g, t);
             } finally {
                 g.dispose();
             }
         }
 
         private void pintar(Graphics2D g, double t) {
-            int w = getWidth();
-            int h = getHeight();
+            int w = 860;
+            int h = 480;
             double cx = w / 2.0;
             double cy = h / 2.0 - 10;
 
@@ -518,7 +545,7 @@ final class IntroSplash {
                         Graphics2D gc = (Graphics2D) gl.create();
                         try {
                             gc.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) p));
-                            gc.setColor(Color.WHITE);
+                            gc.setColor(FONDO_APP); // mismo negro que el bloque de la cabecera
                             gc.drawString(c, (float) xd, (float) (lineaBase + 10 * (1 - p)));
                         } finally {
                             gc.dispose();
