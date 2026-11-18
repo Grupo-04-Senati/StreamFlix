@@ -5,7 +5,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.MultipleGradientPaint;
@@ -26,57 +25,57 @@ import javax.swing.JWindow;
 import javax.swing.Timer;
 
 /**
- * Intro de entrada con el guion de la identidad de Pornhub, adaptada a la marca del proyecto:
+ * Intro de entrada con el guion de la identidad de Pornhub (animación 2D plana), adaptada a la
+ * marca del proyecto:
  *
  * <pre>
- *   1. "REC" de cámara naranja (con corchetes y punto que parpadea) sobre negro.
- *   2. Corte con destello: el "REC" se voltea y aparece un portátil plateado.
- *   3. Un círculo naranja con brillo sube por la pantalla y un cursor se le superpone.
+ *   1. "REC" naranja con punto que parpadea sobre negro.
+ *   2. El "REC" se voltea y aparece un portátil oscuro.
+ *   3. Un círculo naranja sube por su pantalla y un cursor se le superpone.
  *   4. El portátil se voltea y el círculo se convierte en botón de play, que se invierte de color.
- *   5. Un cursor pequeño pulsa el botón (con destello y golpe de cámara).
- *   6. Se forma el logo: "stream" en blanco + "flix" en el bloque naranja, como en la cabecera.
+ *   5. Un cursor pequeño pulsa el botón.
+ *   6. Se forma el logo: "stream" en blanco + "flix" en el bloque naranja, como la cabecera.
  *   7. Debajo aparece una palabra letra a letra y el fondo funde al color exacto de la ventana.
  * </pre>
  *
- * Todo se dibuja a mano con Java2D (sin imágenes) y suena {@code sonidos/...theme.wav}.
+ * Formas planas, sin degradados ni resplandores: así es la identidad original. Todo se dibuja a mano
+ * con Java2D (sin imágenes) y suena {@code sonidos/...theme.wav}.
  */
 final class IntroSplash {
 
     private static final Color INTRO = Color.BLACK;
     private static final Color ORANGE = new Color(0xe68200);
-    private static final Color ORANGE_CLARO = new Color(0xf59b1f);
-    private static final Color GRIS = new Color(0xb5b5b5);
+    private static final Color GRIS = new Color(0x9a9a9a);
     /** Mismo fondo y mismo negro del bloque que la ventana principal, para que el cambio no se note. */
     private static final Color FONDO_APP = new Color(0x1b1b1b);
-    private static final Color PANTALLA = new Color(0x0a0a0a);
-    private static final Color PLATA = new Color(0xd6d6d6);
-    private static final Color PLATA_MEDIO = new Color(0x9a9a9a);
-    private static final Color PLATA_OSCURO = new Color(0x6e6e6e);
+    private static final Color PANTALLA = new Color(0x0c0c0c);
+    private static final Color CARCASA = new Color(0x232323);
+    private static final Color CARCASA_BORDE = new Color(0x3d3d3d);
+    private static final Color BASE_PC = new Color(0x2c2c2c);
 
     /** Lienzo de diseño; luego se escala al tamaño real de la ventana. */
     private static final int ANCHO = 860;
     private static final int ALTO = 480;
 
     // --- tiempos de la animación (ms) ---
-    private static final double REC_SALE = 880;
-    private static final double REC_FIN = 1000;
-    private static final double DESTELLO1_INI = 900;
-    private static final double PORTATIL_INI = 960, PORTATIL_FIN = 1680;
-    private static final double PORTATIL_SALE = 3050, PORTATIL_SALE_FIN = 3400;
-    private static final double CIRCULO_INI = 1750, CIRCULO_FIN = 2400;
-    private static final double CURSOR_INI = 2400;
-    private static final double BOTON_INI = 3100, BOTON_FIN = 3550;
-    private static final double PLAY_INI = 3350, PLAY_FIN = 3650;
-    private static final double INVERTIR_INI = 3750, INVERTIR_FIN = 4100;
-    private static final double CLIC_INI = 4150, CLIC_FIN = 4600;
-    private static final double CAJA_INI = 4600, CAJA_FIN = 5250;
-    private static final double LOGO_INI = 4700;
-    private static final double FLIX_INI = 5250;
-    private static final double PALABRA_INI = 5650;
-    private static final double FONDO_INI = 5500, FONDO_FIN = 6500;
-    private static final double SONIDO_FUNDIDO = 5600;
-    private static final double FUNDIDO = 6500;
-    private static final double DURACION = 7000;
+    private static final double REC_SALE = 820;
+    private static final double REC_FIN = 930;
+    private static final double PORTATIL_INI = 900, PORTATIL_FIN = 1620;
+    private static final double PORTATIL_SALE = 2950, PORTATIL_SALE_FIN = 3300;
+    private static final double CIRCULO_INI = 1700, CIRCULO_FIN = 2320;
+    private static final double CURSOR_INI = 2350;
+    private static final double BOTON_INI = 2950, BOTON_FIN = 3420;
+    private static final double PLAY_INI = 3220, PLAY_FIN = 3520;
+    private static final double INVERTIR_INI = 3620, INVERTIR_FIN = 3950;
+    private static final double CLIC_INI = 4000, CLIC_FIN = 4420;
+    private static final double CAJA_INI = 4420, CAJA_FIN = 5050;
+    private static final double LOGO_INI = 4520;
+    private static final double FLIX_INI = 5050;
+    private static final double PALABRA_INI = 5450;
+    private static final double FONDO_INI = 5250, FONDO_FIN = 6300;
+    private static final double SONIDO_FUNDIDO = 5450;
+    private static final double FUNDIDO = 6300;
+    private static final double DURACION = 6800;
 
     /** Palabra que aparece letra a letra bajo el logo (como "community" en la original). */
     private static final String PALABRA = "comunidad";
@@ -235,25 +234,21 @@ final class IntroSplash {
                 g.translate(w / 2.0, h / 2.0);
                 g.scale(k, k);
                 g.translate(-ANCHO / 2.0, -ALTO / 2.0);
-                if (t > CLIC_FIN - 260 && t < CLIC_FIN + 320) {
-                    // golpe de cámara al pulsar el botón
-                    double fuerza = 5 * (1 - suave(t, CLIC_FIN - 260, CLIC_FIN + 320));
-                    g.translate(fuerza * Math.sin((t - CLIC_FIN + 260) / 14.0), fuerza * 0.35);
-                }
                 pintar(g, t);
             } finally {
                 g.dispose();
             }
         }
 
-        /** Oscurece las esquinas: da aspecto de pieza audiovisual, no de ventana. */
+        /** Oscurece un poco las esquinas: da aspecto de pieza audiovisual, no de ventana. */
         private void vineta(Graphics2D g, int w, int h, double fuerza) {
             if (fuerza <= 0.01) return;
             float radio = (float) (Math.hypot(w, h) / 2.0);
-            int alfa = (int) Math.round(120 * Math.min(1, fuerza));
+            int alfa = (int) Math.round(85 * Math.min(1, fuerza));
             try {
                 g.setPaint(new RadialGradientPaint(new Point2D.Float(w / 2f, h / 2f), radio,
-                        new float[]{0.45f, 1f}, new Color[]{new Color(0, 0, 0, 0), new Color(0, 0, 0, alfa)},
+                        new float[]{0.5f, 1f},
+                        new Color[]{new Color(0, 0, 0, 0), new Color(0, 0, 0, alfa)},
                         MultipleGradientPaint.CycleMethod.NO_CYCLE));
                 g.fillRect(0, 0, w, h);
             } catch (RuntimeException sinDegradado) {
@@ -281,31 +276,27 @@ final class IntroSplash {
             double lineaBase = yLogo + fmLogo.getAscent() - 4;
             Rect caja = new Rect(xLogo + wIzq, yLogo, wDer, altoLogo);
 
-            // 1) REC de cámara
+            // 1) REC
             if (t < REC_FIN) pintarRec(g, cx, cy, t);
 
-            // 2) portátil plateado (entra y sale volteándose)
+            // 2) portátil (entra y sale volteándose)
             if (t > PORTATIL_INI && t < PORTATIL_SALE_FIN) {
                 double sx = t < PORTATIL_SALE
                         ? Math.max(0.002, Math.cos(Math.PI / 2 * (1 - suave(t, PORTATIL_INI, PORTATIL_FIN))))
                         : Math.max(0.002, Math.cos(Math.PI / 2 * suave(t, PORTATIL_SALE, PORTATIL_SALE_FIN)));
-                double alfa = t < PORTATIL_SALE ? suave(t, PORTATIL_INI, PORTATIL_INI + 220)
-                        : 1 - suave(t, PORTATIL_SALE, PORTATIL_SALE + 220);
+                double alfa = t < PORTATIL_SALE ? suave(t, PORTATIL_INI, PORTATIL_INI + 200)
+                        : 1 - suave(t, PORTATIL_SALE, PORTATIL_SALE + 200);
                 pintarPortatil(g, cx, cy, sx, alfa);
             }
 
-            // 3) círculo naranja con brillo subiendo por la pantalla + cursor encima
+            // 3) círculo naranja subiendo por la pantalla + cursor encima
             if (t > CIRCULO_INI && t < PORTATIL_SALE + 120) {
                 double p = suave(t, CIRCULO_INI, CIRCULO_FIN);
                 double r = 30 + 4 * p;
                 double y = cy + 62 - (62 + r - 30) * p;
-                brillo(g, cx, y, r * 3.1, 0.22);
                 g.setColor(ORANGE);
                 g.fillOval((int) Math.round(cx - r), (int) Math.round(y - r),
                         (int) Math.round(r * 2), (int) Math.round(r * 2));
-                g.setColor(ORANGE_CLARO);
-                g.fillOval((int) Math.round(cx - r * 0.55), (int) Math.round(y - r * 0.75),
-                        (int) Math.round(r * 0.8), (int) Math.round(r * 0.8));
                 if (t > CURSOR_INI) {
                     double entra = suave(t, CURSOR_INI, CURSOR_INI + 180);
                     double sale = suave(t, PORTATIL_SALE, PORTATIL_SALE + 200);
@@ -313,7 +304,7 @@ final class IntroSplash {
                 }
             }
 
-            // 4) botón de play: nace del círculo, se invierte de color y acaba como bloque del logo
+            // 4) botón de play: nace del círculo, se invierte y acaba como bloque del logo
             if (t > BOTON_INI) pintarBoton(g, cx, cy, caja, t);
 
             // 5) logo "stream" + "flix" dentro del bloque
@@ -321,46 +312,9 @@ final class IntroSplash {
 
             // 6) palabra letra a letra debajo
             if (t > PALABRA_INI) pintarPalabra(g, cx, yLogo + altoLogo + 46, t);
-
-            // 7) destellos de corte
-            destello(g, w, h, t, DESTELLO1_INI, DESTELLO1_INI + 90, 0.25);
         }
 
-        /** Destello blanco breve (corte / impacto). */
-        private void destello(Graphics2D g, int w, int h, double t, double ini, double fin, double fuerza) {
-            if (t <= ini || t >= fin) return;
-            double p = (t - ini) / (fin - ini);
-            float a = (float) (fuerza * (1 - p) * (1 - p));
-            Graphics2D gl = (Graphics2D) g.create();
-            try {
-                gl.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, Math.max(0f, a)));
-                gl.setColor(Color.WHITE);
-                gl.fillRect(0, 0, w, h);
-            } finally {
-                gl.dispose();
-            }
-        }
-
-        /** Resplandor naranja suave y sin escalones (degradado radial). */
-        private void brillo(Graphics2D g, double x, double y, double radio, double fuerza) {
-            if (fuerza <= 0.004 || radio <= 1) return;
-            int alfa = (int) Math.round(255 * Math.min(1, fuerza));
-            Graphics2D gl = (Graphics2D) g.create();
-            try {
-                gl.setPaint(new RadialGradientPaint(new Point2D.Float((float) x, (float) y), (float) radio,
-                        new float[]{0f, 1f},
-                        new Color[]{new Color(230, 130, 0, alfa), new Color(230, 130, 0, 0)},
-                        MultipleGradientPaint.CycleMethod.NO_CYCLE));
-                gl.fillOval((int) Math.round(x - radio), (int) Math.round(y - radio),
-                        (int) Math.round(radio * 2), (int) Math.round(radio * 2));
-            } catch (RuntimeException sinDegradado) {
-                // sin degradados disponibles: el resplandor es opcional
-            } finally {
-                gl.dispose();
-            }
-        }
-
-        /** "REC" de cámara: corchetes, punto que parpadea y texto que se voltea hacia atrás. */
+        /** "REC" de grabación: punto que parpadea y texto que se voltea hacia atrás. */
         private void pintarRec(Graphics2D g, double cx, double cy, double t) {
             double volteo = suave(t, REC_SALE, REC_FIN);
             if (volteo >= 1) return;
@@ -381,14 +335,15 @@ final class IntroSplash {
                 double entra = suave(t, 0, 140);
                 gl.translate(cx, cy);
                 gl.scale(Math.max(0.002, sx) * (0.94 + 0.06 * entra), 1);
-                gl.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) Math.min(1, entra * 2)));
+                gl.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
+                        (float) Math.min(1, entra * 2)));
 
                 // corchetes de encuadre (coordenadas ya trasladadas al centro)
                 double marcoAn = ancho / 2.0 + 22;
                 double marcoAl = 30;
-                gl.setColor(new Color(230, 130, 0, 110));
-                gl.setStroke(new BasicStroke(1.6f));
-                int largo = 14;
+                gl.setColor(new Color(0x8a6a35));
+                gl.setStroke(new BasicStroke(1.4f));
+                int largo = 13;
                 for (int sx1 = -1; sx1 <= 1; sx1 += 2) {
                     for (int sy1 = -1; sy1 <= 1; sy1 += 2) {
                         int x = (int) Math.round(sx1 * marcoAn);
@@ -418,7 +373,7 @@ final class IntroSplash {
             }
         }
 
-        /** Portátil plateado con perspectiva (base más ancha que el bisel) y reflejo de pantalla. */
+        /** Portátil oscuro de frente, con base en perspectiva (formas planas, sin reflejos). */
         private void pintarPortatil(Graphics2D g, double cx, double cy, double sx, double alfa) {
             if (sx <= 0.02 || alfa <= 0.01) return;
             int an = 320, al = 200;
@@ -430,37 +385,30 @@ final class IntroSplash {
                 gl.scale(sx, 1);
 
                 // tapa
-                gl.setPaint(new GradientPaint(0, -al / 2, PLATA, 0, al / 2, PLATA_OSCURO));
+                gl.setColor(CARCASA);
                 gl.fillRoundRect(-an / 2, -al / 2, an, al, 14, 14);
-                gl.setColor(new Color(255, 255, 255, 70));
-                gl.setStroke(new BasicStroke(1f));
+                gl.setColor(CARCASA_BORDE);
+                gl.setStroke(new BasicStroke(1.4f));
                 gl.drawRoundRect(-an / 2, -al / 2, an, al, 14, 14);
 
                 // pantalla
                 gl.setColor(PANTALLA);
-                gl.fillRoundRect(-an / 2 + 10, -al / 2 + 10, an - 20, al - 20, 8, 8);
-
-                // reflejo diagonal en la pantalla
-                Graphics2D gr = (Graphics2D) gl.create();
-                try {
-                    gr.clip(new java.awt.geom.RoundRectangle2D.Double(
-                            -an / 2 + 10, -al / 2 + 10, an - 20, al - 20, 8, 8));
-                    gr.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.06f));
-                    gr.setColor(Color.WHITE);
-                    gr.fillPolygon(new int[]{-an / 2 + 10, -an / 2 + 150, -an / 2 + 20, -an / 2 + 10},
-                            new int[]{-al / 2 + 10, -al / 2 + 10, al / 2 - 10, al / 2 - 10}, 4);
-                } finally {
-                    gr.dispose();
-                }
+                gl.fillRoundRect(-an / 2 + 11, -al / 2 + 11, an - 22, al - 22, 8, 8);
+                gl.setColor(new Color(0x2a2a2a));
+                gl.setStroke(new BasicStroke(1f));
+                gl.drawRoundRect(-an / 2 + 11, -al / 2 + 11, an - 22, al - 22, 8, 8);
 
                 // base con perspectiva
-                gl.setPaint(new GradientPaint(0, al / 2 - 2, new Color(0xdadada), 0, al / 2 + 20, PLATA_MEDIO));
+                gl.setColor(BASE_PC);
                 gl.fillPolygon(
                         new int[]{-an / 2 - 6, an / 2 + 6, an / 2 + 34, -an / 2 - 34},
                         new int[]{al / 2 - 2, al / 2 - 2, al / 2 + 16, al / 2 + 16}, 4);
-                gl.setColor(new Color(0x8a8a8a));
-                gl.setStroke(new BasicStroke(1.4f));
-                gl.drawLine(-an / 2 + 40, al / 2 + 7, an / 2 - 40, al / 2 + 7);
+                gl.setColor(CARCASA_BORDE);
+                gl.drawPolygon(
+                        new int[]{-an / 2 - 6, an / 2 + 6, an / 2 + 34, -an / 2 - 34},
+                        new int[]{al / 2 - 2, al / 2 - 2, al / 2 + 16, al / 2 + 16}, 4);
+                gl.setColor(new Color(0x3a3a3a));
+                gl.drawLine(-an / 2 + 44, al / 2 + 7, an / 2 - 44, al / 2 + 7);
             } finally {
                 gl.dispose();
             }
@@ -499,7 +447,7 @@ final class IntroSplash {
             // morphing del botón hacia el bloque naranja de "flix"
             double pc = suave(t, CAJA_INI, CAJA_FIN);
             if (pc >= 1) {
-                pintarBloque(g, caja, t);
+                pintarBloque(g, caja);
                 return;
             }
             double x = lerp(cx - tam / 2, caja.x, pc);
@@ -528,8 +476,6 @@ final class IntroSplash {
                 naranja = false;
             }
 
-            if (pc <= 0) brillo(g, x + an / 2, y + al / 2, an * 1.15, 0.18);
-
             Graphics2D gl = (Graphics2D) g.create();
             try {
                 gl.translate(x + an / 2, y + al / 2);
@@ -537,22 +483,18 @@ final class IntroSplash {
                 gl.translate(-(x + an / 2), -(y + al / 2));
 
                 // al transformarse en el bloque del logo el relleno vuelve al naranja
-                gl.setColor(mezcla(naranja ? ORANGE : new Color(0x111111), ORANGE, pc));
+                gl.setColor(mezcla(naranja ? ORANGE : new Color(0x101010), ORANGE, pc));
                 gl.fillRoundRect((int) Math.round(x), (int) Math.round(y),
                         (int) Math.round(an), (int) Math.round(al),
                         (int) Math.round(rr), (int) Math.round(rr));
-                if (naranja) {
-                    gl.setColor(ORANGE_CLARO);
-                    gl.setStroke(new BasicStroke(1.2f));
-                    gl.drawRoundRect((int) Math.round(x), (int) Math.round(y),
-                            (int) Math.round(an), (int) Math.round(al),
-                            (int) Math.round(rr), (int) Math.round(rr));
-                } else if (pc < 1) {
+                if (!naranja && pc < 1) {
+                    // el botón invertido se lee por el contorno naranja
                     Graphics2D gb = (Graphics2D) gl.create();
                     try {
-                        gb.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) (1 - pc)));
+                        gb.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
+                                (float) (1 - pc)));
                         gb.setColor(ORANGE);
-                        gb.setStroke(new BasicStroke(2.2f));
+                        gb.setStroke(new BasicStroke(2f));
                         gb.drawRoundRect((int) Math.round(x), (int) Math.round(y),
                                 (int) Math.round(an), (int) Math.round(al),
                                 (int) Math.round(rr), (int) Math.round(rr));
@@ -595,47 +537,13 @@ final class IntroSplash {
                         1 - suave(t, CLIC_FIN, CLIC_FIN + 160));
                 pintarCursor(g, xc, yc, 0.95, alfa);
             }
-
-            // onda del clic
-            double onda = suave(t, CLIC_FIN - 220, CLIC_FIN + 220);
-            if (onda > 0 && onda < 1) {
-                Graphics2D gr = (Graphics2D) g.create();
-                try {
-                    gr.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
-                            (float) (0.5 * (1 - onda))));
-                    gr.setColor(ORANGE_CLARO);
-                    gr.setStroke(new BasicStroke(2.6f));
-                    int r = (int) Math.round(72 + 80 * onda);
-                    gr.drawOval((int) Math.round(cx - r), (int) Math.round(cy - r), r * 2, r * 2);
-                } finally {
-                    gr.dispose();
-                }
-            }
         }
 
-        /** Bloque naranja ya colocado en el logo, con un brillo que lo recorre. */
-        private void pintarBloque(Graphics2D g, Rect caja, double t) {
-            double calidez = 1 - suave(t, CAJA_FIN + 200, CAJA_FIN + 900);
-            brillo(g, caja.x + caja.w / 2, caja.y + caja.h / 2, caja.w * 0.85, 0.14 * calidez);
+        /** Bloque naranja ya colocado en el logo. */
+        private void pintarBloque(Graphics2D g, Rect caja) {
             g.setColor(ORANGE);
             g.fillRoundRect((int) Math.round(caja.x), (int) Math.round(caja.y),
                     (int) Math.round(caja.w), (int) Math.round(caja.h), 12, 12);
-            double brillo = suave(t, CAJA_FIN + 120, CAJA_FIN + 620);
-            if (brillo > 0 && brillo < 1) {
-                Graphics2D gl = (Graphics2D) g.create();
-                try {
-                    gl.clip(new Rectangle2D.Double(caja.x, caja.y, caja.w, caja.h));
-                    float a = (float) (0.24 * (1 - Math.abs(brillo - 0.5) * 2));
-                    gl.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, Math.max(0f, a)));
-                    gl.setColor(Color.WHITE);
-                    int sx = (int) Math.round(caja.x - 80 + (caja.w + 160) * brillo);
-                    gl.fillPolygon(new int[]{sx, sx + 40, sx + 14, sx - 26},
-                            new int[]{(int) caja.y - 4, (int) caja.y - 4,
-                                (int) (caja.y + caja.h) + 4, (int) (caja.y + caja.h) + 4}, 4);
-                } finally {
-                    gl.dispose();
-                }
-            }
         }
 
         /** "stream" en blanco y "flix" dentro del bloque, letra a letra. */
@@ -647,13 +555,13 @@ final class IntroSplash {
                 double x = xLogo;
                 for (int i = 0; i < izq.length(); i++) {
                     String c = izq.substring(i, i + 1);
-                    double p = suave(t, LOGO_INI + i * 55, LOGO_INI + i * 55 + 280);
+                    double p = suave(t, LOGO_INI + i * 55, LOGO_INI + i * 55 + 260);
                     if (p > 0) {
                         Graphics2D gc = (Graphics2D) gl.create();
                         try {
                             gc.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) p));
                             gc.setColor(Color.WHITE);
-                            gc.drawString(c, (float) x, (float) (lineaBase + 12 * (1 - p)));
+                            gc.drawString(c, (float) x, (float) (lineaBase + 10 * (1 - p)));
                         } finally {
                             gc.dispose();
                         }
@@ -664,13 +572,13 @@ final class IntroSplash {
                 double xd = caja.x + pad;
                 for (int i = 0; i < der.length(); i++) {
                     String c = der.substring(i, i + 1);
-                    double p = suave(t, FLIX_INI + i * 45, FLIX_INI + i * 45 + 260);
+                    double p = suave(t, FLIX_INI + i * 45, FLIX_INI + i * 45 + 240);
                     if (p > 0) {
                         Graphics2D gc = (Graphics2D) gl.create();
                         try {
                             gc.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) p));
                             gc.setColor(FONDO_APP); // mismo negro que el bloque de la cabecera
-                            gc.drawString(c, (float) xd, (float) (lineaBase + 10 * (1 - p)));
+                            gc.drawString(c, (float) xd, (float) (lineaBase + 8 * (1 - p)));
                         } finally {
                             gc.dispose();
                         }
@@ -682,7 +590,7 @@ final class IntroSplash {
             }
         }
 
-        /** Palabra naranja que aparece letra a letra con un pequeño rebote. */
+        /** Palabra gris que aparece letra a letra con un pequeño rebote. */
         private void pintarPalabra(Graphics2D g, double cx, double y, double t) {
             Font f = new Font("SansSerif", Font.PLAIN, 20);
             FontMetrics fm = g.getFontMetrics(f);
@@ -695,7 +603,7 @@ final class IntroSplash {
                 double p = suave(t, PALABRA_INI + i * 50, PALABRA_INI + i * 50 + 300);
                 double wc = fm.stringWidth(c);
                 if (p > 0) {
-                    double escala = 0.55 + 0.45 * rebote(p);
+                    double escala = 0.6 + 0.4 * rebote(p);
                     Graphics2D gc = (Graphics2D) g.create();
                     try {
                         gc.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
