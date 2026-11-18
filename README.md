@@ -25,6 +25,13 @@ tabla de recomendaciones con porcentajes y publicación.
 - En NetBeans: clic derecho sobre `streamflix/gui/VentanaPrincipal.java` -> `Run File`
   (o ejecuta `Main` con el argumento `--gui`: Project Properties > Run > Arguments).
 - Desde consola (en la raíz del proyecto): `javac -encoding UTF-8 -d out $(find src -name "*.java")` y luego `java -cp out streamflix.Main --gui`.
+- **Animación de entrada** (~7,7 s), con el mismo guion de la identidad de Pornhub: `REC` naranja con
+  punto parpadeante → se voltea en un portátil → un círculo naranja sube por la pantalla con un cursor
+  encima → el portátil se voltea y el círculo se convierte en botón de play que se invierte de color →
+  un cursor lo pulsa → se forma el logo `stream` + `flix` en bloque naranja → aparece una palabra letra a letra.
+  Suena `sonidos/ph-theme-gta-san-andreas-theme.wav`. Java no reproduce MP3 con `javax.sound.sampled`,
+  por eso el sonido se usa en WAV (8 s, mono 44.1 kHz, recortado del MP3 original que queda como fuente).
+  Si el archivo no está, la intro se ve igual pero en silencio.
 - Pestañas:
   1. Carga (`CargadorDatos`)
   2. Recorrer datos

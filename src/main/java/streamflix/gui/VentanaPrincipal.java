@@ -2757,7 +2757,13 @@ public class VentanaPrincipal extends JFrame {
             try {
                 UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
             } catch (Exception ignorada) { /* se usa el aspecto por defecto */ }
-            new VentanaPrincipal(carpetaFinal).setVisible(true);
+            // Intro tipo Pornhub con sonido: al terminar muestra la ventana principal.
+            VentanaPrincipal ventana = new VentanaPrincipal(carpetaFinal);
+            try {
+                new IntroSplash(ventana).mostrar();
+            } catch (RuntimeException sinIntro) {
+                ventana.setVisible(true); // sin animación, pero la app siempre abre
+            }
         });
     }
 }
