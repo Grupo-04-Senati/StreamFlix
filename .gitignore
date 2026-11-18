@@ -1,0 +1,16 @@
+# Compilados y salida de construcción
+target/
+out/
+build/
+nbproject/private/
+*.class
+
+# Metadatos de herramientas locales (no forman parte del proyecto)
+.sync/
+.freebuff/
+.cloud-attachments/
+
+# Archivos de sistema
+Thumbs.db
+desktop.ini
+.DS_Store
